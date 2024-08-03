@@ -161,6 +161,18 @@ templ List(l *models.List) {
 	</div>
 }
 
+templ Event(e *models.Event) {
+    <div id={ fmt.Sprintf("event-%s", e.Id) } class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-5">
+        <div class="card card-compact h-full bg-base-100">
+			<div class="card-body flex justify-between">
+                <p>
+                    { fmt.Sprintf("zodpovedny: %s", e.Name) }
+                </p>
+			</div>
+        </div>
+    </div>
+}
+
 templ ListWithToast(l *models.List, message string) {
 	@List(l)
 	<div id={ shared.ToastId } hx-swap-oob="true" class="toast toast-top toast-center">
@@ -182,6 +194,9 @@ templ HomePartial(c shared.Context, archives bool) {
 			for _, list := range c.Lists {
 				@List(list)
 			}
+            for _, event := range c.Events {
+                @Event(event)
+            }
 		</div>
 	} else {
 		<div class="h-full hero flex-auto bg-base-200">

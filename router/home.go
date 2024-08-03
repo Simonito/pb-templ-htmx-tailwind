@@ -26,5 +26,11 @@ func (ar *AppRouter) GetHome(c echo.Context) error {
 		return htmx.Error(c, "Unable to get lists")
 	}
 
-	return components.Render(c, http.StatusOK, components.Home(shared.Context{User: user, Lists: lists}, false))
+	events, err := models.GetEvents(ar.App.Dao())
+	if err != nil {
+		ar.App.Logger().Error("Unable to get events", "error", err)
+		return htmx.Error(c, "Unable to get events")
+	}
+
+	return components.Render(c, http.StatusOK, components.Home(shared.Context{User: user, Lists: lists, Events: events}, false))
 }
