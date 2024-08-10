@@ -2,23 +2,24 @@ package calendar
 
 import (
 	"fmt"
-	"github.com/Depado/pb-templ-htmx-tailwind/models"
+	"github.com/Depado/pb-templ-htmx-tailwind/services"
 )
 
-type DayStats struct {
-	Month       int
-	Date        int
-    Year        int
-	Day         string
-	Events      []*models.Event
-	IsThisMonth bool
-}
+//type DayStats struct {
+//	Month       int
+//	Date        int
+//  Year        int
+//	Day         string
+//	Events      []*models.Event
+//	IsThisMonth bool
+//}
 
 type Context struct {
-	Days []*DayStats
+	//Days []*DayStats
+    DayEntries []services.CalendarWindowDayEntry
 }
 
-templ CalendarDayCard(day *DayStats) {
+templ CalendarDayCard(day services.CalendarWindowDayEntry) {
     if day.IsThisMonth {
         <div class="relative flex justify-center items-center
                 w-full h-24
@@ -30,9 +31,9 @@ templ CalendarDayCard(day *DayStats) {
                     flex items-center justify-center
                     bg-gray-100 rounded-tl-lg rounded-br-lg shadow-inner
                     text-xs p-1 text-gray-800"
-                datetime={ fmt.Sprintf("%04d-%02d-%02d", day.Year, day.Month, day.Date) }
+                datetime={ day.Day.DateString }
 		    >
-			    { fmt.Sprintf("%d", day.Date) }
+			    { fmt.Sprintf("%d", day.Day.Date) }
 		    </time>
 	    </div>
     } else {
@@ -46,9 +47,9 @@ templ CalendarDayCard(day *DayStats) {
                     flex items-center justify-center
                     bg-gray-100 rounded-tl-lg rounded-br-lg shadow-inner
                     text-xs p-1 text-gray-400"
-                datetime={ fmt.Sprintf("%04d-%02d-%02d", day.Year, day.Month, day.Date) }
+                datetime={ day.Day.DateString }
 		    >
-			    { fmt.Sprintf("%d", day.Date) }
+			    { fmt.Sprintf("%d", day.Day.Date) }
 		    </time>
 	    </div>
 
@@ -69,7 +70,7 @@ templ Calendar(c Context) {
 			<div class="text-center font-semibold">Fri</div>
 			<div class="text-center font-semibold">Sat</div>
 			<div class="text-center font-semibold">Sun</div>
-			for _, day := range c.Days {
+			for _, day := range c.DayEntries {
 				@CalendarDayCard(day)
 			}
 		</div>

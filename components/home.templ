@@ -5,6 +5,7 @@ import "github.com/Depado/pb-templ-htmx-tailwind/components/shared"
 import "github.com/Depado/pb-templ-htmx-tailwind/components/icons"
 import "github.com/Depado/pb-templ-htmx-tailwind/models"
 import "github.com/Depado/pb-templ-htmx-tailwind/components/calendar"
+import "github.com/Depado/pb-templ-htmx-tailwind/services/di"
 
 templ Progress(perc, size float64) {
 	<svg class="me-1" id="rad" width={ fmt.Sprintf("%.fpx", size) } height={ fmt.Sprintf("%.fpx", size) } viewBox={ fmt.Sprintf("0 0 %.f %.f", size, size) } version="1.1" xmlns="http://www.w3.org/2000/svg" style="transform:rotate(-90deg)">
@@ -199,65 +200,66 @@ templ HomePartial(c shared.Context, archives bool) {
                 @Event(event)
             }
 
-            @calendar.Calendar(calendar.Context{Days: []*calendar.DayStats{
-                &calendar.DayStats{
-                    Date: 28,
-                    Month: 7,
-                    Year: 2024,
-                    Day: "Monday",
-                    Events: nil,
-                    IsThisMonth: false,
-                },
-                &calendar.DayStats{
-                    Date: 29,
-                    Month: 7,
-                    Year: 2024,
-                    Day: "Monday",
-                    Events: nil,
-                    IsThisMonth: false,
-                },
-                &calendar.DayStats{
-                    Date: 30,
-                    Month: 7,
-                    Year: 2024,
-                    Day: "Monday",
-                    Events: nil,
-                    IsThisMonth: false,
-                },
-                &calendar.DayStats{
-                    Date: 31,
-                    Month: 7,
-                    Year: 2024,
-                    Day: "Monday",
-                    Events: nil,
-                    IsThisMonth: false,
-                },
-                &calendar.DayStats{
-                    Date: 1,
-                    Month: 8,
-                    Year: 2024,
-                    Day: "Monday",
-                    Events: nil,
-                    IsThisMonth: true,
-                },
-                &calendar.DayStats{
-                    Date: 2,
-                    Month: 9,
-                    Year: 2024,
-                    Day: "Monday",
-                    Events: nil,
-                    IsThisMonth: true,
-                },
-                &calendar.DayStats{
-                    Date: 3,
-                    Month: 8,
-                    Year: 2024,
-                    Day: "Monday",
-                    Events: nil,
-                    IsThisMonth: true,
-                },
-            },
-            })
+            @calendar.Calendar(calendar.Context{DayEntries: di.Instance().CalendarProvider.CurrentMonthWindow()})
+            //calendar.Context{Days: []*calendar.DayStats{
+                //&calendar.DayStats{
+                    //Date: 28,
+                    //Month: 7,
+                    //Year: 2024,
+                    //Day: "Monday",
+                    //Events: nil,
+                    //IsThisMonth: false,
+                //},
+                //&calendar.DayStats{
+                    //Date: 29,
+                    //Month: 7,
+                    //Year: 2024,
+                    //Day: "Monday",
+                    //Events: nil,
+                    //IsThisMonth: false,
+                //},
+                //&calendar.DayStats{
+                    //Date: 30,
+                    //Month: 7,
+                    //Year: 2024,
+                    //Day: "Monday",
+                    //Events: nil,
+                    //IsThisMonth: false,
+                //},
+                //&calendar.DayStats{
+                    //Date: 31,
+                    //Month: 7,
+                    //Year: 2024,
+                    //Day: "Monday",
+                    //Events: nil,
+                    //IsThisMonth: false,
+                //},
+                //&calendar.DayStats{
+                    //Date: 1,
+                    //Month: 8,
+                    //Year: 2024,
+                    //Day: "Monday",
+                    //Events: nil,
+                    //IsThisMonth: true,
+                //},
+                //&calendar.DayStats{
+                    //Date: 2,
+                    //Month: 9,
+                    //Year: 2024,
+                    //Day: "Monday",
+                    //Events: nil,
+                    //IsThisMonth: true,
+                //},
+                //&calendar.DayStats{
+                    //Date: 3,
+                    //Month: 8,
+                    //Year: 2024,
+                    //Day: "Monday",
+                    //Events: nil,
+                    //IsThisMonth: true,
+                //},
+            //},
+            //})
 		</div>
 	} else {
 		<div class="h-full hero flex-auto bg-base-200">
