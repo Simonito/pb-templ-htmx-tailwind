@@ -10,23 +10,24 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"fmt"
-	"github.com/Depado/pb-templ-htmx-tailwind/models"
+	"github.com/Depado/pb-templ-htmx-tailwind/services"
 )
 
-type DayStats struct {
-	Month       int
-	Date        int
-	Year        int
-	Day         string
-	Events      []*models.Event
-	IsThisMonth bool
-}
+//type DayStats struct {
+//	Month       int
+//	Date        int
+//  Year        int
+//	Day         string
+//	Events      []*models.Event
+//	IsThisMonth bool
+//}
 
 type Context struct {
-	Days []*DayStats
+	//Days []*DayStats
+	DayEntries []services.CalendarWindowDayEntry
 }
 
-func CalendarDayCard(day *DayStats) templ.Component {
+func CalendarDayCard(day services.CalendarWindowDayEntry) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -50,9 +51,9 @@ func CalendarDayCard(day *DayStats) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%04d-%02d-%02d", day.Year, day.Month, day.Date))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(day.Day.DateString)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 33, Col: 87}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 34, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -63,9 +64,9 @@ func CalendarDayCard(day *DayStats) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", day.Date))
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", day.Day.Date))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 35, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 36, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -81,9 +82,9 @@ func CalendarDayCard(day *DayStats) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%04d-%02d-%02d", day.Year, day.Month, day.Date))
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(day.Day.DateString)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 49, Col: 87}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 50, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -94,9 +95,9 @@ func CalendarDayCard(day *DayStats) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", day.Date))
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", day.Day.Date))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 51, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 52, Col: 40}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -133,7 +134,7 @@ func Calendar(c Context) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, day := range c.Days {
+		for _, day := range c.DayEntries {
 			templ_7745c5c3_Err = CalendarDayCard(day).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
