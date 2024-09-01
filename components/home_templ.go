@@ -866,7 +866,9 @@ func HomePartial(c shared.Context, archives bool) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = calendar.Calendar(calendar.Context{DayEntries: di.Instance().CalendarProvider.CurrentMonthWindow()}).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = calendar.Calendar(calendar.Context{
+				DayEntries: di.Instance().CalendarProvider.CurrentMonthWindow(),
+			}).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
