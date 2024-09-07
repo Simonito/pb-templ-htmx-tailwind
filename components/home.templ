@@ -1,11 +1,17 @@
 package components
 
-import "fmt"
-import "github.com/Depado/pb-templ-htmx-tailwind/components/shared"
-import "github.com/Depado/pb-templ-htmx-tailwind/components/icons"
-import "github.com/Depado/pb-templ-htmx-tailwind/models"
-import "github.com/Depado/pb-templ-htmx-tailwind/components/calendar"
-import "github.com/Depado/pb-templ-htmx-tailwind/services/di"
+import (
+	"fmt"
+	"github.com/Depado/pb-templ-htmx-tailwind/components/calendar"
+	"github.com/Depado/pb-templ-htmx-tailwind/components/icons"
+	"github.com/Depado/pb-templ-htmx-tailwind/components/shared"
+	"github.com/Depado/pb-templ-htmx-tailwind/models"
+)
+
+type HomeContext struct {
+    BaseContext shared.Context
+    CalendarContext calendar.Context
+}
 
 templ Progress(perc, size float64) {
 	<svg class="me-1" id="rad" width={ fmt.Sprintf("%.fpx", size) } height={ fmt.Sprintf("%.fpx", size) } viewBox={ fmt.Sprintf("0 0 %.f %.f", size, size) } version="1.1" xmlns="http://www.w3.org/2000/svg" style="transform:rotate(-90deg)">
@@ -164,15 +170,15 @@ templ List(l *models.List) {
 }
 
 templ Event(e *models.Event) {
-    <div id={ fmt.Sprintf("event-%s", e.Id) } class="w-full p-5">
-        <div class="card card-compact h-full bg-base-100">
+	<div id={ fmt.Sprintf("event-%s", e.Id) } class="w-full p-5">
+		<div class="card card-compact h-full bg-base-100">
 			<div class="card-body flex justify-between">
-                <p>
-                    { fmt.Sprintf("zodpovedny: %s", e.Name) }
-                </p>
+				<p>
+					{ fmt.Sprintf("zodpovedny: %s", e.Name) }
+				</p>
 			</div>
-        </div>
-    </div>
+		</div>
+	</div>
 }
 
 templ ListWithToast(l *models.List, message string) {
@@ -190,19 +196,10 @@ templ ListWithToast(l *models.List, message string) {
 	</div>
 }
 
-templ HomePartial(c shared.Context, archives bool) {
-	if c.User != nil {
+templ HomePartial(c HomeContext, archives bool) {
+	if c.BaseContext.User != nil {
 		<div class="flex flex-wrap h-full bg-base-300">
-			for _, list := range c.Lists {
-				@List(list)
-			}
-            for _, event := range c.Events {
-                @Event(event)
-            }
-
-            @calendar.Calendar(calendar.Context{
-                DayEntries: di.Instance().CalendarProvider.CurrentMonthWindow(),
-            })
+			@calendar.Calendar(c.CalendarContext)
 		</div>
 	} else {
 		<div class="h-full hero flex-auto bg-base-200">
@@ -216,8 +213,8 @@ templ HomePartial(c shared.Context, archives bool) {
 	}
 }
 
-templ Home(c shared.Context, archives bool) {
-	@shared.Base(c, "Home") {
+templ Home(c HomeContext, archives bool) {
+	@shared.Base(c.BaseContext, "Home") {
 		@HomePartial(c, archives)
 	}
 }
