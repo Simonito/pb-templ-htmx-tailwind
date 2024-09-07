@@ -16,10 +16,14 @@ type CalendarDay struct {
 type CalendarWindowDayEntry struct {
 	Day         *CalendarDay
 	IsThisMonth bool
+	IsToday     bool
 }
 
 type CalendarService interface {
 	CurrentMonthWindow() []CalendarWindowDayEntry
+	CalendarMonthWindow(baseDate time.Time) []CalendarWindowDayEntry
+	ParseDate(dateStr string) (time.Time, error)
+	Format(date time.Time) string
 }
 
 type DefaultCalendarService struct {
@@ -28,7 +32,20 @@ type DefaultCalendarService struct {
 
 const dateFormat = "2006-01-02"
 
-// Creates and returnes a so called window of a current month for calendar
+func (calServ *DefaultCalendarService) Format(date time.Time) string {
+	return date.Format(dateFormat)
+}
+
+func (calServ *DefaultCalendarService) ParseDate(dateStr string) (time.Time, error) {
+	return time.Parse(dateFormat, dateStr)
+}
+
+func (calendarServ *DefaultCalendarService) CurrentMonthWindow() []CalendarWindowDayEntry {
+	currentDate := calendarServ.DateService.GetTodayDate()
+	return calendarServ.CalendarMonthWindow(currentDate)
+}
+
+// Creates and returnes a "window" of a month for calendar
 // The window is basically all the dates that should get displayed in a calendar
 //
 // imagine this month
@@ -39,11 +56,11 @@ const dateFormat = "2006-01-02"
 // | 27  | 28  | 29  | 30  | 31  | _1  | _2  |
 //
 //	where the underscored numbers represent days of different month.
-func (calendarServ *DefaultCalendarService) CurrentMonthWindow() []CalendarWindowDayEntry {
-	currentDate := calendarServ.DateService.GetTodayDate()
+func (calendarServ *DefaultCalendarService) CalendarMonthWindow(baseDate time.Time) []CalendarWindowDayEntry {
+	isToday := baseDate == calendarServ.DateService.GetTodayDate()
 
 	// calculate the dates that need to be "prepended" from prev month
-	startDays := getCalendarStartDays(currentDate)
+	startDays := getCalendarStartDays(baseDate)
 
 	var calendarDayEntries []CalendarWindowDayEntry
 	for _, day := range startDays {
@@ -54,12 +71,13 @@ func (calendarServ *DefaultCalendarService) CurrentMonthWindow() []CalendarWindo
 		calendarDayEntries = append(calendarDayEntries, CalendarWindowDayEntry{
 			Day:         calEntry,
 			IsThisMonth: false,
+			IsToday:     false,
 		})
 	}
 
-	// append the all the dates of the current month
-	currentYear, currentMonth, _ := currentDate.Date()
-	firstOfMonth := time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, currentDate.Location())
+	// append all the dates of the current month
+	currentYear, currentMonth, _ := baseDate.Date()
+	firstOfMonth := time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, baseDate.Location())
 	firstOfNextMonth := firstOfMonth.AddDate(0, 1, 0)
 	lastOfMonth := firstOfNextMonth.Add(-time.Hour * 24)
 
@@ -71,10 +89,17 @@ func (calendarServ *DefaultCalendarService) CurrentMonthWindow() []CalendarWindo
 		calendarDayEntries = append(calendarDayEntries, CalendarWindowDayEntry{
 			Day:         calEntry,
 			IsThisMonth: true,
+			IsToday:     false,
 		})
 	}
 
-	// finish off by adding the calculated days of next month to complete the window
+	// modify IsToday attribute if the passed in baseDate is actually today
+	if isToday {
+		todayIndex := len(startDays) + baseDate.Day() - 1
+		calendarDayEntries[todayIndex].IsToday = true
+	}
+
+	// Finish off by adding the calculated days of next month to complete the window
 	endDays := getCalendarEndDays(lastOfMonth)
 	for _, day := range endDays {
 		calEntry, err := newCalendarDay(day.Day(), int(day.Month()), day.Year())
@@ -84,8 +109,10 @@ func (calendarServ *DefaultCalendarService) CurrentMonthWindow() []CalendarWindo
 		calendarDayEntries = append(calendarDayEntries, CalendarWindowDayEntry{
 			Day:         calEntry,
 			IsThisMonth: false,
+			IsToday:     false,
 		})
 	}
+
 	return calendarDayEntries
 }
 

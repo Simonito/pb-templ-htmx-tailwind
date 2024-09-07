@@ -8,15 +8,17 @@ import (
 	pbmodels "github.com/pocketbase/pocketbase/models"
 
 	"github.com/Depado/pb-templ-htmx-tailwind/components"
+	"github.com/Depado/pb-templ-htmx-tailwind/components/calendar"
 	"github.com/Depado/pb-templ-htmx-tailwind/components/shared"
 	"github.com/Depado/pb-templ-htmx-tailwind/htmx"
 	"github.com/Depado/pb-templ-htmx-tailwind/models"
+	"github.com/Depado/pb-templ-htmx-tailwind/services/di"
 )
 
 func (ar *AppRouter) GetHome(c echo.Context) error {
 	rec := c.Get(apis.ContextAuthRecordKey)
 	if rec == nil {
-		return components.Render(c, http.StatusOK, components.Home(shared.Context{}, false))
+		return components.Render(c, http.StatusOK, components.Home(components.HomeContext{}, false))
 	}
 
 	user := c.Get(apis.ContextAuthRecordKey).(*pbmodels.Record)
@@ -32,5 +34,22 @@ func (ar *AppRouter) GetHome(c echo.Context) error {
 		return htmx.Error(c, "Unable to get events")
 	}
 
-	return components.Render(c, http.StatusOK, components.Home(shared.Context{User: user, Lists: lists, Events: events}, false))
+	return components.Render(
+		c,
+		http.StatusOK,
+		components.Home(
+			components.HomeContext{
+				BaseContext: shared.Context{
+					User:   user,
+					Lists:  lists,
+					Events: events,
+				},
+				CalendarContext: calendar.Context{
+					DayEntries:       di.Instance().CalendarProvider.CurrentMonthWindow(),
+					FirstOfCurrMonth: di.Instance().DateProvider.GetTodayDate(),
+				},
+			},
+			false,
+		),
+	)
 }

@@ -38,10 +38,13 @@ func (ar *AppRouter) SetupRoutes(live bool) error {
 	ar.Router.POST("/list/:id/task", ar.CreateTask)
 	ar.Router.PATCH("/list/:id/archive", ar.ToggleArchive)
 
-	// unimplemented
-	// ar.Router.POST("/list", ar.ListCreate)
-	// ar.Router.PATCH("/list/:id/archive", ar.ListArchive)
-	// ar.Router.DELETE("/list/:id", ar.ListDelete)
+	err := ar.setupHtmxRoutes()
+	return err
+}
+
+func (ar *AppRouter) setupHtmxRoutes() error {
+	ar.Router.GET("/calendar/nextMonth/:date", ar.GetNextMonthCalendar)
+	ar.Router.GET("/calendar/prevMonth/:date", ar.GetPrevMonthCalendar)
 
 	return nil
 }
