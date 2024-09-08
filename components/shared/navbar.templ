@@ -2,14 +2,6 @@ package shared
 
 import "github.com/Depado/pb-templ-htmx-tailwind/components/icons"
 
-templ ThemeToggle() {
-	<label class="swap swap-rotate btn btn-ghost">
-		<input type="checkbox" class="theme-controller " value="light"/>
-		@icons.Sun("swap-on fill-current")
-		@icons.Moon("swap-off fill-current")
-	</label>
-}
-
 templ Drawer(c Context) {
 	<div class="drawer-side">
 		<label for="drawer" aria-label="close sidebar" class="drawer-overlay"></label>
@@ -144,9 +136,6 @@ templ DrawerWrapper(c Context) {
 								</a>
 							</li>
 						}
-						<li>
-							@ThemeToggle()
-						</li>
 					</ul>
 				</div>
 			</div>
