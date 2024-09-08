@@ -1,0 +1,2 @@
+nice rotating gradient-ish border:
+https://play.tailwindcss.com/GDk0nBTs3O?file=config
