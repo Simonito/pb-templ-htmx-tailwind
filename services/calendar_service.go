@@ -57,8 +57,6 @@ func (calendarServ *DefaultCalendarService) CurrentMonthWindow() []CalendarWindo
 //
 //	where the underscored numbers represent days of different month.
 func (calendarServ *DefaultCalendarService) CalendarMonthWindow(baseDate time.Time) []CalendarWindowDayEntry {
-	isToday := baseDate == calendarServ.DateService.GetTodayDate()
-
 	// calculate the dates that need to be "prepended" from prev month
 	startDays := getCalendarStartDays(baseDate)
 
@@ -89,14 +87,8 @@ func (calendarServ *DefaultCalendarService) CalendarMonthWindow(baseDate time.Ti
 		calendarDayEntries = append(calendarDayEntries, CalendarWindowDayEntry{
 			Day:         calEntry,
 			IsThisMonth: true,
-			IsToday:     false,
+			IsToday:     calEntry.DateString == calendarServ.Format(calendarServ.DateService.GetTodayDate()),
 		})
-	}
-
-	// modify IsToday attribute if the passed in baseDate is actually today
-	if isToday {
-		todayIndex := len(startDays) + baseDate.Day() - 1
-		calendarDayEntries[todayIndex].IsToday = true
 	}
 
 	// Finish off by adding the calculated days of next month to complete the window
