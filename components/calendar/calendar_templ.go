@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"fmt"
+	"github.com/Depado/pb-templ-htmx-tailwind/models"
 	"github.com/Depado/pb-templ-htmx-tailwind/services"
 	"github.com/Depado/pb-templ-htmx-tailwind/services/di"
 	"time"
@@ -18,6 +19,7 @@ import (
 type Context struct {
 	DayEntries       []services.CalendarWindowDayEntry
 	FirstOfCurrMonth time.Time
+	EventsByDate     map[string][]*models.Event
 }
 
 const (
@@ -111,7 +113,7 @@ func CalCardHeader(day services.CalendarWindowDayEntry) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(day.Day.DateString)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 63, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 65, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -124,7 +126,7 @@ func CalCardHeader(day services.CalendarWindowDayEntry) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", day.Day.Date))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 65, Col: 37}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 67, Col: 37}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -257,7 +259,7 @@ func Calendar(c Context) templ.Component {
 			fmt.Sprintf("/calendar/prevMonth/%s", di.Instance().CalendarProvider.Format(c.FirstOfCurrMonth)),
 		)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 103, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 105, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -270,7 +272,7 @@ func Calendar(c Context) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s %d", c.FirstOfCurrMonth.Month(), c.FirstOfCurrMonth.Year()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 113, Col: 83}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 115, Col: 83}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -285,7 +287,7 @@ func Calendar(c Context) templ.Component {
 			fmt.Sprintf("/calendar/nextMonth/%s", di.Instance().CalendarProvider.Format(c.FirstOfCurrMonth)),
 		)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 121, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/calendar/calendar.templ`, Line: 123, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {

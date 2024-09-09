@@ -15,6 +15,17 @@ import (
 	"github.com/Depado/pb-templ-htmx-tailwind/services/di"
 )
 
+func organizeEventsByDate(events []*models.Event) map[string][]*models.Event {
+	eventMap := make(map[string][]*models.Event)
+
+	for _, event := range events {
+		dateStr := di.Instance().CalendarProvider.Format(event.Date.Time())
+
+		eventMap[dateStr] = append(eventMap[dateStr], event)
+	}
+	return eventMap
+}
+
 func (ar *AppRouter) GetHome(c echo.Context) error {
 	rec := c.Get(apis.ContextAuthRecordKey)
 	if rec == nil {
@@ -28,7 +39,13 @@ func (ar *AppRouter) GetHome(c echo.Context) error {
 		return htmx.Error(c, "Unable to get lists")
 	}
 
-	events, err := models.GetEvents(ar.App.Dao())
+	currMonthWindow := di.Instance().CalendarProvider.CurrentMonthWindow()
+	firstOfWindow, err := di.Instance().CalendarProvider.ParseDate(currMonthWindow[0].Day.DateString)
+	lastOfWindow, err := di.Instance().CalendarProvider.ParseDate(currMonthWindow[len(currMonthWindow)-1].Day.DateString)
+	if err != nil {
+		ar.App.Logger().Error("Error parsing date string provided by CalendarProvider", "error", err)
+	}
+	events, err := models.GetEventsBetweenDays(ar.App.Dao(), firstOfWindow, lastOfWindow)
 	if err != nil {
 		ar.App.Logger().Error("Unable to get events", "error", err)
 		return htmx.Error(c, "Unable to get events")
@@ -47,6 +64,7 @@ func (ar *AppRouter) GetHome(c echo.Context) error {
 				CalendarContext: calendar.Context{
 					DayEntries:       di.Instance().CalendarProvider.CurrentMonthWindow(),
 					FirstOfCurrMonth: di.Instance().DateProvider.GetTodayDate(),
+					EventsByDate:     organizeEventsByDate(events),
 				},
 			},
 			false,

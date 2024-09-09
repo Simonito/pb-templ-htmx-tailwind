@@ -5,11 +5,13 @@ import (
     "time"
 	"github.com/Depado/pb-templ-htmx-tailwind/services"
 	"github.com/Depado/pb-templ-htmx-tailwind/services/di"
+	"github.com/Depado/pb-templ-htmx-tailwind/models"
 )
 
 type Context struct {
 	DayEntries []services.CalendarWindowDayEntry
     FirstOfCurrMonth time.Time
+    EventsByDate map[string][]*models.Event
 }
 
 const (

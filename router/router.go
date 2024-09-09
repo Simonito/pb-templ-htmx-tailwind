@@ -1,12 +1,19 @@
 package router
 
 import (
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 	"github.com/pocketbase/pocketbase/core"
 
 	"github.com/Depado/pb-templ-htmx-tailwind/assets"
+	"github.com/Depado/pb-templ-htmx-tailwind/components"
+	"github.com/Depado/pb-templ-htmx-tailwind/components/test"
 	"github.com/Depado/pb-templ-htmx-tailwind/htmx"
+	"github.com/Depado/pb-templ-htmx-tailwind/models"
 )
 
 type AppRouter struct {
@@ -39,6 +46,8 @@ func (ar *AppRouter) SetupRoutes(live bool) error {
 	ar.Router.PATCH("/list/:id/archive", ar.ToggleArchive)
 
 	err := ar.setupHtmxRoutes()
+
+	ar.Router.GET("/test", ar.TestPath)
 	return err
 }
 
@@ -47,4 +56,13 @@ func (ar *AppRouter) setupHtmxRoutes() error {
 	ar.Router.GET("/calendar/prevMonth/:date", ar.GetPrevMonthCalendar)
 
 	return nil
+}
+
+func (ar *AppRouter) TestPath(c echo.Context) error {
+	records, err := models.GetEventsOfMonth(ar.App.Dao(), time.Date(2024, time.August, 1, 1, 1, 1, 1, time.Now().Location()))
+	if err != nil {
+		return htmx.Error(c, err.Error())
+	}
+	return components.Render(c, http.StatusOK, test.Test(strconv.Itoa(len(records))))
+
 }
