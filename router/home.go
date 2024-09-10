@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v5"
@@ -45,6 +46,7 @@ func (ar *AppRouter) GetHome(c echo.Context) error {
 	if err != nil {
 		ar.App.Logger().Error("Error parsing date string provided by CalendarProvider", "error", err)
 	}
+	fmt.Printf("first: %s | last: %s\n", firstOfWindow.String(), lastOfWindow.String())
 	events, err := models.GetEventsBetweenDays(ar.App.Dao(), firstOfWindow, lastOfWindow)
 	if err != nil {
 		ar.App.Logger().Error("Unable to get events", "error", err)

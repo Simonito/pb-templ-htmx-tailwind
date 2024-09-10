@@ -50,14 +50,15 @@ func EventQueryByMonth(dao *daos.Dao, randomDayInMonth time.Time) *dbx.SelectQue
 }
 
 func EventQueryBetweenDays(dao *daos.Dao, firstDay time.Time, lastDay time.Time) *dbx.SelectQuery {
-	filterExp := fmt.Sprintf("'%04d-%02d-01 00:00:00.000Z' <= date AND date <= '%04d-%02d-%02d 23:59:59.999Z'",
+	filterExp := fmt.Sprintf("'%04d-%02d-%02d 00:00:00.000Z' <= date AND date <= '%04d-%02d-%02d 23:59:59.999Z'",
 		firstDay.Year(),
 		int(firstDay.Month()),
+		firstDay.Day(),
 		lastDay.Year(),
 		int(lastDay.Month()),
 		lastDay.Day())
 
-	// fmt.Println("Query filter Exp: " + filterExp)
+	fmt.Println("Query filter Exp: " + filterExp)
 	return dao.DB().
 		Select("event.*").
 		From("event").

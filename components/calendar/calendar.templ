@@ -6,6 +6,7 @@ import (
 	"github.com/Depado/pb-templ-htmx-tailwind/services"
 	"github.com/Depado/pb-templ-htmx-tailwind/services/di"
 	"github.com/Depado/pb-templ-htmx-tailwind/models"
+	"strconv"
 )
 
 type Context struct {
@@ -74,20 +75,47 @@ templ CalCardHeader(day services.CalendarWindowDayEntry) {
 </div>
 }
 
-templ CalCardBody(day services.CalendarWindowDayEntry) {
+func eventStripClass(idx int) string {
+    colors := []string {
+        "bg-gradient-to-r from-primary via-secondary to-info text-primary-content",
+        "bg-secondary text-secondary-content",
+        "bg-accent",
+    }
+    return fmt.Sprintf("%s w-full min-h-fit p-1 mb-1 mx-auto rounded-sm", colors[idx])
+}
+
+func eventName(event *models.Event) string {
+    return event.Name
+}
+
+func testPrintMapContent(eventMap map[string][]*models.Event) string {
+    retStr := ""
+    for key, val := range eventMap {
+        retStr = retStr + "\n" + key + " : " + strconv.Itoa(len(val))
+    }
+    return retStr
+}
+
+templ CalCardBody(day services.CalendarWindowDayEntry, eventMap map[string][]*models.Event) {
 <div class="w-full flex flex-col justify-start items-start mt-1 overflow-hidden">
-    <div class=" overflow-hidden w-full">
+    <div class="overflow-hidden w-full">
+      {strconv.Itoa(len(eventMap[day.Day.DateString]))}
+      for idx, event := range eventMap[day.Day.DateString] {
+          <div class={ eventStripClass(idx) }>{ eventName(event) }</div>
+      }
+      <!--
       <div class="bg-gradient-to-r from-primary via-secondary to-info text-primary-content w-full min-h-fit p-1 mb-1 mx-auto rounded-sm">Babysitting</div>
       <div class="bg-secondary text-secondary-content w-full min-h-fit p-1 mb-1 mx-auto rounded-sm">Cooking Class</div>
       <div class="bg-accent w-full min-h-fit p-1 mb-1 mx-auto rounded-sm">Yoga</div>
+      -->
     </div>
   </div>
 }
 
-templ CalendarDayCard(day services.CalendarWindowDayEntry) {
+templ CalendarDayCard(day services.CalendarWindowDayEntry, eventMap map[string][]*models.Event) {
     <div class={ getCalCardClass(day.IsThisMonth, day.IsToday) }>
             @CalCardHeader(day)
-            @CalCardBody(day)
+            @CalCardBody(day, eventMap)
     </div>
 }
 
@@ -128,6 +156,7 @@ templ Calendar(c Context) {
 						&rarr;
 					</button>
 				</div>
+                <div>{ testPrintMapContent(c.EventsByDate) }</div>
 				<div class="grid grid-cols-7 gap-1">
 					<!-- Header for days of the week -->
 					<div class="text-center font-semibold">Mon</div>
@@ -138,7 +167,7 @@ templ Calendar(c Context) {
 					<div class="text-center font-semibold">Sat</div>
 					<div class="text-center font-semibold">Sun</div>
 					for _, day := range c.DayEntries {
-						@CalendarDayCard(day)
+						@CalendarDayCard(day, c.EventsByDate)
 					}
 				</div>
 			</div>

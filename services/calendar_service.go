@@ -59,6 +59,7 @@ func (calendarServ *DefaultCalendarService) CurrentMonthWindow() []CalendarWindo
 func (calendarServ *DefaultCalendarService) CalendarMonthWindow(baseDate time.Time) []CalendarWindowDayEntry {
 	// calculate the dates that need to be "prepended" from prev month
 	startDays := getCalendarStartDays(baseDate)
+	// fmt.Printf("start days count: %d\n", len(startDays))
 
 	var calendarDayEntries []CalendarWindowDayEntry
 	for _, day := range startDays {
